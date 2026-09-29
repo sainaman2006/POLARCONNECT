@@ -1,0 +1,194 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Polar Explorer | POLAR CONNECT</title><meta name="description" content="POLAR CONNECT — Indian polar science knowledge and outreach portal"><link rel="stylesheet" href="styles.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.145/Build/Cesium/Widgets/widgets.css"></head><body>
+<header class="topbar"><div class="container nav"><a class="brand" href="index.html"><div class="brand-mark" data-icon="igloo"></div><div>POLAR CONNECT<div class="small">Science • Data • People</div></div></a><nav class="navlinks"><a class="" href="index.html">Home</a><a class="" href="live.html">Polar Live</a><a class="active" href="explorer.html">Explorer</a><a class="" href="research.html">Research</a><a class="" href="media.html">Media</a><a class="" href="scientists.html">Scientists</a><a class="" href="support.html">Support</a></nav><a class="pill" href="ai.html"><span data-icon="spark"></span> Ask PolarAI</a></div></header>
+
+<main><section class="section"><div class="container">
+  <div class="eyebrow">Polar Explorer</div>
+  <h1>Research on the map and globe</h1>
+  <p class="section-intro">Nine tracked locations across the Arctic, Antarctica and the Southern Ocean — India's three active stations, one historic base and the expedition and sampling zones linked to current research. Toggle a layer, or open a station card to fly to it.</p>
+
+  <div class="grid2">
+    <div class="panel">
+      <h3>2D research map</h3>
+      <div id="map"></div>
+      <div class="legend" id="legend" style="margin-top:14px"></div>
+    </div>
+    <div class="panel">
+      <h3>Data layers</h3>
+      <div class="layer-list" id="layerList">
+        <label class="layer"><input type="checkbox" checked data-layer="station"> Research stations <span class="swatch" style="background:#2196c9"></span></label>
+        <label class="layer"><input type="checkbox" checked data-layer="expedition"> Expeditions <span class="swatch" style="background:#6b7fd1"></span></label>
+        <label class="layer"><input type="checkbox" checked data-layer="ice"> Ice / glacier <span class="swatch" style="background:#4fb9d8"></span></label>
+        <label class="layer"><input type="checkbox" data-layer="ocean"> Ocean observations <span class="swatch" style="background:#12946f"></span></label>
+        <label class="layer"><input type="checkbox" data-layer="atmosphere"> Atmosphere <span class="swatch" style="background:#e0975a"></span></label>
+        <label class="layer"><input type="checkbox" data-layer="bio"> Biodiversity <span class="swatch" style="background:#c05fae"></span></label>
+        <label class="layer"><input type="checkbox" data-layer="historic"> Historic bases <span class="swatch" style="background:#94a3b8"></span></label>
+      </div>
+      <div class="notice" style="margin-top:14px">Click a station marker — or a card below — to view its research scope. Layers are drawn from approved datasets.</div>
+      <h3 style="margin-top:20px">Stations &amp; sites</h3>
+      <div class="station-list" id="stationList"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h3>3D CesiumJS globe</h3>
+    <p class="small" style="margin:-6px 0 14px">Dashed lines trace the logistics link from India to each active station. Click a point for its research focus.</p>
+    <div id="cesium" class="cesium-wrap"></div>
+  </div>
+</div></section></main>
+
+<footer class="footer"><div class="container footergrid"><div><b>POLAR CONNECT</b><p>Indian polar science knowledge and outreach platform connecting research, data, media, students and scientists.</p></div><div><b>EXPLORE</b><p><a href="live.html">Polar Live</a><br><a href="explorer.html">Polar Explorer</a><br><a href="research.html">Research Repository</a></p></div><div><b>CONNECT</b><p><a href="scientists.html">Chat with Scientists</a><br><a href="ai.html">PolarAI Assistant</a><br><a href="media.html">Media Library</a><br><a href="support.html">Support POLAR CONNECT</a></p></div></div></footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.145/Build/Cesium/Cesium.js"></script>
+<script>
+/* lat, lng use true geographic convention (lat first) throughout this file */
+const SITES = [
+  {id:'himadri', name:'Himadri', category:'station', lat:78.923, lng:11.829, region:'Ny-Ålesund, Svalbard — Arctic',
+   since:1997.5, established:'Operational since 2008', focus:'Atmospheric &amp; cryosphere science, glaciology, microbiology',
+   blurb:'India\'s first Arctic research base, part of the multinational research community at Ny-Ålesund.'},
+  {id:'maitri', name:'Maitri', category:'station', lat:-70.769, lng:11.733, region:'Schirmacher Oasis — East Antarctica',
+   established:'Operational since 1989', focus:'Geology, meteorology, upper-atmosphere physics',
+   blurb:'A rock-based station built on the Schirmacher ice-free oasis, one of the longer-running Indian bases.'},
+  {id:'bharati', name:'Bharati', category:'station', lat:-69.405, lng:76.188, region:'Larsemann Hills — East Antarctica',
+   established:'Operational since 2012', focus:'Ocean &amp; atmospheric science, remote sensing, geospace',
+   blurb:'India\'s newest and southernmost permanent station, built from modular shipping-container units.'},
+  {id:'dg', name:'Dakshin Gangotri', category:'historic', lat:-70.1, lng:12.0, region:'Princess Astrid Coast — East Antarctica',
+   established:'Established 1983 · decommissioned, now a supply base', focus:'India\'s first Antarctic base',
+   blurb:'The original 1983 base is buried under ice today and now serves only as a transit supply depot.'},
+  {id:'exp1', name:'Southern Ocean transect', category:'expedition', lat:-60, lng:45, region:'Southern Ocean',
+   established:'Annual resupply &amp; research voyage', focus:'Ocean sampling en route between Cape Town and Antarctica',
+   blurb:'The shipping corridor Indian resupply vessels follow each summer season, used for underway sampling.'},
+  {id:'exp2', name:'Indian Ocean sector line', category:'expedition', lat:-45, lng:70, region:'Southern Indian Ocean',
+   established:'Seasonal sampling line', focus:'Water-mass &amp; current structure',
+   blurb:'A repeat hydrographic line used to track the Antarctic Circumpolar Current as it crosses the Indian Ocean sector.'},
+  {id:'ice1', name:'Svalbard glacier mass balance', category:'ice', lat:78.9, lng:12.6, region:'Near Himadri — Arctic',
+   established:'Multi-year monitoring plot', focus:'Glacier velocity &amp; thickness',
+   blurb:'Stake-and-radar monitoring plots on the glaciers surrounding Ny-Ålesund, revisited each Arctic season.'},
+  {id:'ice2', name:'Schirmacher ice-shelf survey', category:'ice', lat:-70.5, lng:11.0, region:'Near Maitri — Antarctica',
+   established:'Radar &amp; GPS survey line', focus:'Ice-shelf thickness &amp; flow',
+   blurb:'Ground-penetrating radar transects used to track shelf thickness change near the Maitri approach.'},
+  {id:'ocean1', name:'Bharati coastal moorings', category:'ocean', lat:-68.9, lng:76.4, region:'Prydz Bay — Antarctica',
+   established:'Sub-surface mooring array', focus:'Sea level, salinity, temperature',
+   blurb:'Instrumented moorings offshore of Bharati recording ocean conditions through the polar night.'},
+  {id:'atmo1', name:'Himadri atmospheric observatory', category:'atmosphere', lat:78.92, lng:11.95, region:'Ny-Ålesund — Arctic',
+   established:'Continuous observatory', focus:'Black carbon, aerosols, greenhouse gases',
+   blurb:'Year-round instruments recording the atmospheric composition that reaches the high Arctic.'},
+  {id:'bio1', name:'Larsemann Hills biodiversity plots', category:'bio', lat:-69.43, lng:76.35, region:'Near Bharati — Antarctica',
+   established:'Seasonal survey plots', focus:'Lichen, moss &amp; microbial ecology',
+   blurb:'Ice-free oasis plots surveyed for the cold-tolerant life that persists through the Antarctic winter.'},
+  {id:'bio2', name:'Southern Ocean krill survey', category:'bio', lat:-58, lng:50, region:'Southern Ocean',
+   established:'Seasonal net-tow survey', focus:'Krill &amp; marine ecosystem',
+   blurb:'Net-tow transects tracking krill abundance, a keystone of the Southern Ocean food web.'}
+];
+
+const COLORS = {station:'#2196c9', expedition:'#6b7fd1', ice:'#4fb9d8', ocean:'#12946f', atmosphere:'#e0975a', bio:'#c05fae', historic:'#94a3b8'};
+const ICONS  = {station:'station', expedition:'ship', ice:'ice', ocean:'wave', atmosphere:'wind', bio:'paw', historic:'compass'};
+const LABELS = {station:'Research station', expedition:'Expedition route', ice:'Ice / glacier site', ocean:'Ocean observation', atmosphere:'Atmosphere site', bio:'Biodiversity site', historic:'Historic base'};
+
+const SVG = {
+  station:'<path d="M12 21s7-6.1 7-11.6A7 7 0 0 0 5 9.4C5 14.9 12 21 12 21Z"/><circle cx="12" cy="9.4" r="2.4"/>',
+  ship:'<path d="m4 12 16-8-6 16-3-6-7-2Z" stroke-linejoin="round"/>',
+  ice:'<path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11" stroke-linecap="round"/>',
+  wave:'<path d="M2 16c1.6 0 2.4-1.4 4-1.4s2.4 1.4 4 1.4 2.4-1.4 4-1.4 2.4 1.4 4 1.4 2.4-1.4 4-1.4" stroke-linecap="round" stroke-linejoin="round"/>',
+  wind:'<path d="M3 8h10.5a2.75 2.75 0 1 0-2.6-3.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h14.5a2.75 2.75 0 1 1-2.6 3.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  paw:'<circle cx="12" cy="15.2" r="4"/><circle cx="5.4" cy="10.4" r="2"/><circle cx="18.6" cy="10.4" r="2"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="m14.8 9.2-1.7 4.9-4.9 1.7 1.7-4.9 4.9-1.7Z" stroke-linejoin="round"/>'
+};
+
+function markerHtml(cat){
+  return '<div class="map-marker" style="background:'+COLORS[cat]+'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">'+SVG[ICONS[cat]]+'</svg></div>';
+}
+
+const map = L.map('map', {scrollWheelZoom:false}).setView([5,35],2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap contributors'}).addTo(map);
+
+const leafletMarkers = {};
+const layerGroups = {};
+Object.keys(COLORS).forEach(cat => layerGroups[cat] = L.layerGroup());
+
+SITES.forEach(s => {
+  const icon = L.divIcon({html:markerHtml(s.category), className:'', iconSize:[30,30], iconAnchor:[15,29], popupAnchor:[0,-26]});
+  const m = L.marker([s.lat,s.lng], {icon}).bindPopup(
+    '<b>'+s.name+'</b><br><span style="color:#5c7c92">'+s.region+'</span>'+
+    '<br><span style="color:#0e6e9e;font-weight:600;font-size:12px">'+LABELS[s.category]+'</span>'+
+    '<p style="margin:8px 0 6px">'+s.blurb+'</p>'+
+    '<div style="font-size:12px;color:#5c7c92">'+s.established+'<br>Focus: '+s.focus+'</div>'+
+    '<a href="scientists.html" style="display:inline-block;margin-top:8px;font-weight:600;color:#0e6e9e">Find researchers →</a>'
+  );
+  leafletMarkers[s.id] = m;
+  layerGroups[s.category].addLayer(m);
+});
+Object.keys(layerGroups).forEach(cat => {
+  const cb = document.querySelector('[data-layer="'+cat+'"]');
+  if(cb && cb.checked) layerGroups[cat].addTo(map);
+});
+
+document.querySelectorAll('#layerList input[type=checkbox]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const cat = cb.getAttribute('data-layer');
+    if(cb.checked) layerGroups[cat].addTo(map); else map.removeLayer(layerGroups[cat]);
+  });
+});
+
+/* legend, built from the same category map so it can never drift out of sync */
+document.getElementById('legend').innerHTML = Object.keys(LABELS).map(cat =>
+  '<span class="lg-item"><span class="lg-dot" style="background:'+COLORS[cat]+'"></span>'+LABELS[cat]+'</span>'
+).join('');
+
+/* sidebar station list — stations + historic base only, to keep it scannable */
+const listed = SITES.filter(s => s.category==='station' || s.category==='historic');
+document.getElementById('stationList').innerHTML = listed.map(s =>
+  '<div class="station-card" data-id="'+s.id+'">'+
+    '<span class="dot" style="background:'+COLORS[s.category]+'"></span>'+
+    '<div><b>'+s.name+'</b><div class="meta">'+s.region+'</div>'+
+    '<div class="stats-row"><span>'+s.established+'</span></div></div>'+
+  '</div>'
+).join('');
+document.querySelectorAll('.station-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const s = SITES.find(x => x.id === card.getAttribute('data-id'));
+    map.flyTo([s.lat,s.lng], 5, {duration:1.1});
+    leafletMarkers[s.id].openPopup();
+  });
+});
+
+/* ---------- 3D globe ---------- */
+const v = new Cesium.Viewer('cesium', {animation:false, timeline:false, baseLayerPicker:false, geocoder:false, homeButton:false, sceneModePicker:false, navigationHelpButton:false, fullscreenButton:false, infoBox:true, selectionIndicator:false, terrainProvider:new Cesium.EllipsoidTerrainProvider()});
+v.imageryLayers.removeAll();
+v.imageryLayers.addImageryProvider(new Cesium.OpenStreetMapImageryProvider({url:'https://tile.openstreetmap.org/'}));
+v.scene.globe.enableLighting = true;
+
+const INDIA = Cesium.Cartesian3.fromDegrees(77.2,28.6,0);
+SITES.filter(s=>s.category==='station').forEach(s=>{
+  const pos = Cesium.Cartesian3.fromDegrees(s.lng, s.lat, 30000);
+  v.entities.add({
+    name:s.name,
+    position:pos,
+    point:{pixelSize:12, color:Cesium.Color.fromCssColorString(COLORS[s.category]), outlineColor:Cesium.Color.WHITE, outlineWidth:2},
+    label:{text:s.name, font:'600 13px Inter, sans-serif', fillColor:Cesium.Color.WHITE, style:Cesium.LabelStyle.FILL_AND_OUTLINE, outlineWidth:3, outlineColor:Cesium.Color.fromCssColorString('#0c2436'), pixelOffset:new Cesium.Cartesian2(0,-18)},
+    description:'<b>'+s.region+'</b><p>'+s.blurb+'</p><p><i>'+s.established+'</i><br>Focus: '+s.focus+'</p>'
+  });
+  v.entities.add({
+    polyline:{
+      positions:[INDIA, pos],
+      width:1.4,
+      material:new Cesium.PolylineDashMaterialProperty({color:Cesium.Color.fromCssColorString(COLORS[s.category]).withAlpha(.75), dashLength:12}),
+      arcType:Cesium.ArcType.GEODESIC
+    }
+  });
+});
+SITES.filter(s=>s.category!=='station').forEach(s=>{
+  v.entities.add({
+    name:s.name,
+    position:Cesium.Cartesian3.fromDegrees(s.lng, s.lat, 15000),
+    point:{pixelSize:7, color:Cesium.Color.fromCssColorString(COLORS[s.category]).withAlpha(.9), outlineColor:Cesium.Color.WHITE, outlineWidth:1},
+    description:'<b>'+s.region+'</b><p>'+s.blurb+'</p><p><i>'+s.established+'</i></p>'
+  });
+});
+v.entities.add({name:'India', position:INDIA, point:{pixelSize:8, color:Cesium.Color.fromCssColorString('#e0975a'), outlineColor:Cesium.Color.WHITE, outlineWidth:2}, label:{text:'India', font:'600 12px Inter, sans-serif', fillColor:Cesium.Color.WHITE, pixelOffset:new Cesium.Cartesian2(0,-16), style:Cesium.LabelStyle.FILL_AND_OUTLINE, outlineWidth:3, outlineColor:Cesium.Color.fromCssColorString('#0c2436')}});
+
+v.camera.setView({destination:Cesium.Cartesian3.fromDegrees(30,10,24000000)});
+</script>
+<script src="animations.js" defer></script><script src="effects.js" defer></script>
+</body></html>

@@ -1,0 +1,13 @@
+{
+  "name": "polar-connect-payments",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Razorpay payment backend + static host for the POLAR CONNECT prototype",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/payments.test.js"
+  },
+  "engines": { "node": ">=20.12" },
+  "dependencies": { "express": "^4.21.2" }
+}

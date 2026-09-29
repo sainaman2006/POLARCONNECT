@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Support | POLAR CONNECT</title><meta name="description" content="Support Indian polar science — secure contributions via UPI, cards and netbanking."><link rel="stylesheet" href="styles.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"></head><body>
+<header class="topbar"><div class="container nav"><a class="brand" href="index.html"><div class="brand-mark" data-icon="igloo"></div><div>POLAR CONNECT<div class="small">Science • Data • People</div></div></a><nav class="navlinks"><a class="" href="index.html">Home</a><a class="" href="live.html">Polar Live</a><a class="" href="explorer.html">Explorer</a><a class="" href="research.html">Research</a><a class="" href="media.html">Media</a><a class="" href="scientists.html">Scientists</a><a class="active" href="support.html">Support</a></nav><a class="pill" href="ai.html"><span data-icon="spark"></span> Ask PolarAI</a></div></header>
+<main><section class="section"><div class="container support-grid">
+
+<div class="support-copy">
+  <div class="eyebrow">Support POLAR CONNECT</div>
+  <h1 class="support-title">Help keep <span>polar science</span> open to everyone.</h1>
+  <p class="section-intro">Polar Live, PolarAI and PolarConnect exist so that students, teachers and curious people can see how the poles are changing and talk to the people studying them. Your contribution keeps that access free.</p>
+
+  <h3 class="support-h">Choose where it goes</h3>
+  <div class="cause-list" id="causeList" role="radiogroup" aria-label="Cause">
+    <button type="button" class="cause" role="radio" data-cause="open-data" aria-checked="true"><span class="icon" data-icon="wave"></span><span><b>Open polar data</b><small>Keeps the Polar Live indicators, datasets and explainers free to use.</small></span></button>
+    <button type="button" class="cause" role="radio" data-cause="student-outreach" aria-checked="false"><span class="icon" data-icon="people"></span><span><b>Student outreach</b><small>Supports PolarConnect sessions and learning material for schools.</small></span></button>
+    <button type="button" class="cause" role="radio" data-cause="field-instruments" aria-checked="false"><span class="icon" data-icon="station"></span><span><b>Field &amp; instruments</b><small>Contributes toward sensors, calibration and getting field data online.</small></span></button>
+  </div>
+
+  <h3 class="support-h">What your support helps keep measuring</h3>
+  <p class="small support-sub">Every parameter has a reason. Tap one to see why we measure it.</p>
+  <div class="measure-grid">
+    <a class="measure" href="live.html?d=ocean&amp;p=ph"><span class="icon" data-icon="wave"></span><b>Ocean</b><small>pH and salinity show how the sea absorbs CO₂ and how much ice is melting.</small></a>
+    <a class="measure" href="live.html?d=ice&amp;p=glaciervel"><span class="icon" data-icon="ice"></span><b>Ice &amp; glacier</b><small>Thickness and flow speed reveal how quickly ice is being lost to the sea.</small></a>
+    <a class="measure" href="live.html?d=atmosphere&amp;p=bc"><span class="icon" data-icon="wind"></span><b>Atmosphere</b><small>Soot and other particles show what is warming or cooling the poles.</small></a>
+    <a class="measure" href="live.html?d=bio&amp;p=chla"><span class="icon" data-icon="paw"></span><b>Biodiversity</b><small>Plankton and wildlife records show whether the food web is stable.</small></a>
+  </div>
+</div>
+
+<aside class="pay-wrap"><div class="panel pay-card" id="payCard">
+  <div id="payForm">
+    <div class="pay-head"><div><div class="eyebrow">Make a contribution</div><h2>One-time support</h2></div><span class="secure" title="Payments are processed by Razorpay"><span data-icon="lock"></span> Secure</span></div>
+
+    <div class="mode-banner" id="modeBanner" hidden></div>
+
+    <label class="pay-label" for="amountCustom">Amount</label>
+    <div class="amount-chips" id="amountChips" role="radiogroup" aria-label="Amount in rupees">
+      <button type="button" class="chip" role="radio" data-amt="250" aria-checked="false">₹250</button>
+      <button type="button" class="chip" role="radio" data-amt="500" aria-checked="true">₹500</button>
+      <button type="button" class="chip" role="radio" data-amt="1000" aria-checked="false">₹1,000</button>
+      <button type="button" class="chip" role="radio" data-amt="2500" aria-checked="false">₹2,500</button>
+      <button type="button" class="chip" role="radio" data-amt="5000" aria-checked="false">₹5,000</button>
+    </div>
+    <div class="amount-input"><span aria-hidden="true">₹</span><input id="amountCustom" inputmode="numeric" autocomplete="off" placeholder="Other amount" aria-describedby="amountHint"></div>
+    <div class="small" id="amountHint"></div>
+
+    <div class="form pay-fields">
+      <label for="donorName">Full name</label>
+      <input id="donorName" autocomplete="name" placeholder="As on your receipt" maxlength="80">
+      <label for="donorEmail">Email <span class="small">(receipt is sent here)</span></label>
+      <input id="donorEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
+      <label for="donorPhone">Mobile <span class="small">(optional, speeds up UPI)</span></label>
+      <input id="donorPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+91 98xxxxxxxx" maxlength="20">
+    </div>
+
+    <div class="pay-error" id="payError" role="alert" hidden></div>
+    <button class="btn pay-btn" id="payBtn" type="button"><span data-icon="heart"></span><span id="payBtnLabel">Contribute ₹500</span></button>
+    <div class="pay-methods small"><span data-icon="shield"></span> UPI · Cards · Netbanking · Wallets. Card and UPI details go straight to Razorpay; this site never sees them.</div>
+  </div>
+
+  <div id="paySuccess" class="pay-success" hidden tabindex="-1" aria-live="polite"></div>
+</div></aside>
+
+</div></section></main>
+<footer class="footer"><div class="container footergrid"><div><b>POLAR CONNECT</b><p>Indian polar science knowledge and outreach platform connecting research, data, media, students and scientists.</p></div><div><b>EXPLORE</b><p><a href="live.html">Polar Live</a><br><a href="explorer.html">Polar Explorer</a><br><a href="research.html">Research Repository</a></p></div><div><b>CONNECT</b><p><a href="scientists.html">Chat with Scientists</a><br><a href="ai.html">PolarAI Assistant</a><br><a href="media.html">Media Library</a><br><a href="support.html">Support POLAR CONNECT</a></p></div></div></footer><div class="toast" id="toast"></div>
+
+<div class="modal-backdrop" id="demoModal" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
+  <div class="eyebrow">Checkout</div>
+  <h3 id="demoTitle">Confirm your contribution</h3>
+  <p class="small">Review the amount below and confirm to complete your contribution.</p>
+  <div class="demo-amount" id="demoAmount"></div>
+  <div class="buttons"><button type="button" class="btn" id="demoOk">Pay now</button><button type="button" class="btn secondary" id="demoFail">Decline</button></div>
+  <button type="button" class="demo-cancel" id="demoCancel">Cancel</button>
+</div></div>
+
+<script src="payments.js" defer></script><script src="animations.js" defer></script><script src="effects.js" defer></script></body></html>
